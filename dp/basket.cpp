@@ -59,16 +59,15 @@ int main() {
         int n;cin>>n;
         read_vec(a,n);
         read_vec(b,n);
-    vector<vector<ll>> dp0(n + 1, vector<ll>(2, 0));
+        vector<vector<ll>> dp0(n,vector<ll>(2,0));
        
         for(int i=n-1;i>=0;i--)
         {
             for(int j=0;j<2;j++)
             {
-               if(j)
+               
                     dp0[i][j]=max(a[i]+dp0[i+1][0],dp0[i+1][1]);
-               else
-                    dp0[i][j]=max(b[i]+dp0[i+1][1],dp0[i+1][0]);
+              
             }
         }
         cout<<max(dp0[0][0],dp0[0][1])<<endl;
