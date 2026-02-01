@@ -2,51 +2,54 @@
 using namespace std;
 using ll = long long;
 
+string s;
+ll dp[20][2][4];
 
-// Auto vector input
-#define read_vec(name, size) vector<ll> name(size); for(int i = 0; i < size; i++) cin >> name[i];
+ll fun(int index, int tight, int noncnt)
+{
+    if (noncnt > 3) return 0;
 
-// Auto vector output
-#define print_vec(v) for (auto &x : v) cout << x << " "; cout << "\n";
+    if (index == (int)s.size())
+        return 1;  // valid because noncnt <= 3 guaranteed
 
-int main() {
+    ll &res = dp[index][tight][noncnt];
+    if (res != -1) return res;
+
+    int up = tight ? (s[index] - '0') : 9;
+    ll ans = 0;
+
+    for (int dig = 0; dig <= up; dig++)
+    {
+        ans += fun(
+            index + 1,
+            tight && (dig == up),
+            noncnt + (dig != 0)
+        );
+    }
+
+    return res = ans;
+}
+
+ll solve(ll x)
+{
+    if (x < 0) return 0;
+    s = to_string(x);
+    memset(dp, -1, sizeof(dp));
+    return fun(0, 1, 0);
+}
+
+int main()
+{
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int t=1;
-
-    while (t--) {
-
-       int n;
-       cin>>n;
-       vector<int>a(n),b(n),c(n);
-       map<int,vector<vector<int>>>mp;
-       int max_val= 0;
-       for(int i=0;i<n;i++)
-       {
-            cin>>a[i]>>b[i]>>c[i];
-             max_val=max(max_val,b[i]);
-            mp[b[i]].push_back({a[i],c[i]});
-       }
-       vector<int>dp(max_val+1,0);
-       dp[0]=0;
-
-        for(int i=1;i<=max_val;i++)
-        { 
-            vector<vector<int>>temp=mp[i];
-            for(int j=0;j<temp.size();j++)
-            {
-               
-           
-                
-                  int a = dp[temp[j][0]-1]+temp[j][1];
-                
-               dp[i]=max(dp[i],a);
-            }
-            dp[i]=max(dp[i],dp[i-1]);
-        }
-cout<<dp[max_val]<<endl;
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        ll l, r;
+        cin >> l >> r;
+        cout << solve(r) - solve(l - 1) << '\n';
     }
-
     return 0;
 }
