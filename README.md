@@ -15,10 +15,10 @@ This repository reflects my problem-solving approach across platforms like
 ## 📌 Platforms
 
 
-- **Codeforces**: https://codeforces.com/profile/YOUR_CODEFORCES_ID  
-- **AtCoder**: https://atcoder.jp/users/YOUR_ATCODER_ID  
-- **LeetCode**: https://leetcode.com/YOUR_LEETCODE_ID  
-- **CSES Problem Set**: https://cses.fi/problemset/
+- **Codeforces**: https://codeforces.com/profile/the_real_mushroo0m
+- **LeetCode**: https://leetcode.com/u/Ashish_23345/  
+- **CSES Problem Set**: https://cses.fi/user/360386
+- **AtCoder**: https://atcoder.jp/users/ashumushroombhai
 
 
 ---
