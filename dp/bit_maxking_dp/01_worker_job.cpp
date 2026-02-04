@@ -8,25 +8,36 @@ using ll = long long;
 // Auto vector output
 #define print_vec(v) for (auto &x : v) cout << x << " "; cout << "\n";
 
-int fun(int row , int col )
+int fun(int index,int set_bit )
 {
-    if(row == col && col == 0)return 1;
-    else if(row < 0 || col < 0)return 0;
-    id(dp[row][col]==-1)return dp[row][col];
-    
-    return dp[row][col]=fun(row-1,col-2)+fun(row-2,col-1);
+    if(index == n) return 0;
+    for(int i=0;i<n;i++)
+    {
+        if((1<<i)&(set_bit)==0)
+        {
+            ans = min((ans,index+1,))
+        }
+    }
 }
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int t;
- t =1;
+   t= 1;
+
 
     while (t--) {
-     int row,col;
-     cin>>row>>col;
-     cout<<fun(row,col)<<endl;
+       int n,m;
+       int grpah[n][m];
+       for(int i=0;i<n;i++)
+       {
+        for(int j=0;j<m;j++)
+        {
+            cin>>grpah[i][j];
+        }
+       }
+
 
     }
 

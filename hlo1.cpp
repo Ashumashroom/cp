@@ -1,48 +1,75 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-// 0001 consider t be worng the we use one more index that as it started or not 
-ll dp[20][2][11][2];
-string s;
 
-ll fun(int index, bool tight, int prev, bool started) {
-    if (index == s.size())
-        return 1;
+// Auto vector input
+#define read_vec(name, size) vector<ll> name(size); for(int i = 0; i < size; i++) cin >> name[i];
 
-    ll &res = dp[index][tight][prev][started];
-    if (res != -1) return res;
-    res = 0;
+// Auto vector output
+#define print_vec(v) for (auto &x : v) cout << x << " "; cout << "\n";
 
-    int ul = tight ? (s[index] - '0') : 9;
+int dfs(int node,int parent[],int level[])
+{
+   
+    if(parent[node]==node)
+    {
 
-    for (int d = 0; d <= ul; d++) {
-        bool nstarted = started || (d != 0);
-
-        // check adjacency only after number has started
-        if (started && nstarted && prev != 10 && d == prev)
-            continue;
-
-        int nprev = nstarted ? d : 10;
-        bool ntight = tight && (d == ul);
-
-        res += fun(index + 1, ntight, nprev, nstarted);
+        return level[node] =0;
     }
-    return res;
-}
+    if(level[node]!=-1)
+    {
+        return level[node];
+    }
 
-ll solve(ll x) {
-    if (x < 0) return 0;
-    s = to_string(x);
-    memset(dp, -1, sizeof(dp));
-    return fun(0, 1, 10, 0);
+    return level[node]=1+dfs(parent[node],parent,level);
+
+    
+
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    ll l, r;
-    cin >> l >> r;
-    cout << solve(r) - solve(l - 1) << "\n";
+    int t;
+    t =1;
+
+    while (t--) {
+
+        int n;cin>>n;
+        int parent[2*n+2];
+        int level[2*n+2];
+        for(int i=1;i<=(2*n)+1;i++)
+        {
+            parent[i]=i;
+            level[i]=-1;
+        }
+        for(int i=1;i<=n;i++)
+        {
+            
+            int x;
+            cin>>x;
+            
+            parent[2*i]=x;
+            parent[(2*i)+1]=x;
+            
+
+        }
+        for(int i=1;i<=2*n+1;i++)
+         {
+             if(level[i]==-1)
+             {
+                dfs(i,parent,level);
+             }
+         }        
+
+            for(int i=1;i<=2*n+1;i++)
+         {
+             cout<<level[i]<<endl;
+         }        
+
+
+    }
+
     return 0;
 }
