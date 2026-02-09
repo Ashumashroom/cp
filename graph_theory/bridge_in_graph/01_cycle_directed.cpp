@@ -1,62 +1,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool dfs(int node, int parent, vector<int>& vis, vector<vector<int>>& adj) {
-    vis[node] = 1;
+vector<int> parent;
+vector<int> cycle_nodes;
+int cycle_start = -1, cycle_end = -1;
 
-    for (int neigh : adj[node]) {
-        if (!vis[neigh]) {
-            if (dfs(neigh, node, vis, adj))
+bool dfs(int node, vector<int>& state, vector<vector<int>>& adj) {
+    state[node] = 1; // visiting
+
+    for (int nbr : adj[node]) {
+        if (state[nbr] == 0) {
+            parent[nbr] = node;
+            if (dfs(nbr, state, adj))
                 return true;
         }
-        else if (neigh != parent) {
-            // visited and not parent → cycle
+        else if (state[nbr] == 1) {
+            // back edge found → cycle
+            cycle_start = nbr;
+            cycle_end = node;
             return true;
         }
     }
+
+    state[node] = 2; // done
     return false;
 }
 
 bool isCycleDFS(int n, vector<vector<int>>& adj) {
-    vector<int> vis(n, 0);
+    vector<int> state(n, 0);
+    parent.assign(n, -1);
 
     for (int i = 0; i < n; i++) {
-        if (!vis[i]) {
-            if (dfs(i, -1, vis, adj))
-                return true;
-        }
-    }
-    return false;
-}
-bool bfs(int src, vector<int>& vis, vector<vector<int>>& adj) {
-    queue<pair<int,int>> q;
-    q.push({src, -1});
-    vis[src] = 1;
-
-    while (!q.empty()) {
-        auto [node, parent] = q.front();
-        q.pop();
-
-        for (int neigh : adj[node]) {
-            if (!vis[neigh]) {
-                vis[neigh] = 1;
-                q.push({neigh, node});
-            }
-            else if (neigh != parent) {
-                // visited and not parent → cycle
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool isCycleBFS(int n, vector<vector<int>>& adj) {
-    vector<int> vis(n, 0);
-
-    for (int i = 0; i < n; i++) {
-        if (!vis[i]) {
-            if (bfs(i, vis, adj))
+        if (state[i] == 0) {
+            if (dfs(i, state, adj))
                 return true;
         }
     }
@@ -71,9 +47,27 @@ int main() {
     for (int i = 0; i < m; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        adj[u].push_back(v); // directed edge
     }
 
-    cout << (isCycleBFS(n, adj) ? "Cycle Found\n" : "No Cycle\n");
+    if (isCycleDFS(n, adj)) {
+        cout << "Cycle Found\n";
+
+        // reconstruct cycle
+        cycle_nodes.push_back(cycle_start);
+        for (int v = cycle_end; v != cycle_start; v = parent[v]) {
+            cycle_nodes.push_back(v);
+        }
+        cycle_nodes.push_back(cycle_start);
+        reverse(cycle_nodes.begin(), cycle_nodes.end());
+
+        cout << "Cycle nodes: ";
+        for (int x : cycle_nodes)
+            cout << x << " ";
+        cout << "\n";
+    } else {
+        cout << "No Cycle\n";
+    }
+
+    return 0;
 }
