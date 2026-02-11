@@ -18,8 +18,8 @@ class BinaryLifting {
 
 public:
     BinaryLifting(vector<int>& p, int n) {
-        LOG = 19; // works up to ~4000 nodes
-        parent.assign(LOG, vector<int>(n + 1, 1));
+        LOG = 12; // works up to ~4000 nodes
+        parent.assign(LOG, vector<int>(n + 1, -1));
 
         // 2^0 parent
         for (int i = 1; i <= n; i++) {
