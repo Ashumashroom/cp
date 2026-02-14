@@ -1,102 +1,59 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-vector<vector<int>> adj;
-vector<int> level;
-
-void dfs(int node, int parent, int depth) {
-    level[node] = depth;
-    for (int child : adj[node]) {
-        if (child == parent) continue;
-        dfs(child, node, depth + 1);
-    }
-}
-
-class BinaryLifting {
-    vector<vector<int>> parent;
-    int LOG;
-
-public:
-    BinaryLifting(vector<int>& p, int n) {
-        LOG = 19; // works up to ~4000 nodes
-        parent.assign(LOG, vector<int>(n + 1, 1));
-
-        // 2^0 parent
-        for (int i = 1; i <= n; i++) {
-            parent[0][i] = p[i];
-        }
-
-        // build binary lifting table
-        for (int i = 1; i < LOG; i++) {
-            for (int v = 1; v <= n; v++) {
-                if (parent[i - 1][v] != -1) {
-                    parent[i][v] = parent[i - 1][ parent[i - 1][v] ];
-                }
-            }
-        }
-    }
-
-    int query(int node, int k) {
-        for (int i = 0; i < LOG; i++) {
-            if (node == -1) return -1;
-            if (k & (1 << i)) {
-                node = parent[i][node];
-            }
-        }
-        return node;
-    }
-
-    int lca(int a, int b) {
-        // 1️⃣ make depths equal
-        if (level[a] < level[b]) swap(a, b);
-
-        a = query(a, level[a] - level[b]);
-
-        // 2️⃣ if same node
-        if (a == b) return a;
-
-        // 3️⃣ lift both together
-        for (int i = LOG - 1; i >= 0; i--) {
-            if (parent[i][a] != -1 && parent[i][a] != parent[i][b]) {
-                a = parent[i][a];
-                b = parent[i][b];
-            }
-        }
-
-        // 4️⃣ parent is LCA
-        return parent[0][a];
-    }
-};
+using ll = long long;
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n, q;
-    cin >> n >> q;
+    int n, m;
+    cin >> n >> m;
 
-    vector<int> p(n + 1, -1);
-    for (int i = 2; i <= n; i++) {
-        cin >> p[i];
-    }
-
-    adj.assign(n + 1, {});
-    level.assign(n + 1, 0);
-
-    // build tree
-    for (int i = 2; i <= n; i++) {
-        adj[p[i]].push_back(i);
-    }
-
-    // root = 1
-    dfs(1, -1, 0);
-
-    BinaryLifting bl(p, n);
-
-    while (q--) {
+    vector<tuple<int,int,ll>> edges;
+    for(int i = 0; i < m; i++) {
         int a, b;
-        cin >> a >> b;
-        cout << bl.lca(a, b) << '\n';
+        ll c;
+        cin >> a >> b >> c;
+        edges.push_back({a, b, c});
+    }
+
+    vector<ll> dist(n+1, 0);
+    vector<int> parent(n+1, -1);
+
+    int x = -1;
+
+    for(int i = 1; i <= n; i++) {
+        x = -1;
+        for(auto [u, v, w] : edges) {
+            if(dist[v] > dist[u] + w) {
+                dist[v] = dist[u] + w;
+                parent[v] = u;
+                x = v;
+            }
+        }
+    }
+
+    if(x == -1) {
+        cout << "NO\n";
+    } 
+    else {
+        for(int i = 0; i < n; i++)
+            x = parent[x];
+
+        vector<int> cycle;
+        int cur = x;
+        do {
+            cycle.push_back(cur);
+            cur = parent[cur];
+        } while(cur != x);
+
+        cycle.push_back(x);
+        reverse(cycle.begin(), cycle.end());
+
+        cout << "YES\n";
+        for(int v : cycle)
+            cout << v << " ";
+        cout << "\n";
     }
 
     return 0;

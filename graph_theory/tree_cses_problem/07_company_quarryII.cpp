@@ -1,24 +1,29 @@
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
 
-vector<vector<int>> adj;
-vector<int> level;
-
-void dfs(int node, int parent, int depth) {
-    level[node] = depth;
-    for (int child : adj[node]) {
-        if (child == parent) continue;
-        dfs(child, node, depth + 1);
+vector<int>p;
+vector<int>level;
+void dfs(vector<vector<int>>&adj,int node,vector<int>&vis)
+{
+    vis[node]=1;
+    for(auto it:adj[node])
+    {
+        if(vis[it]==0)
+        {
+            level[it]=1+level[node];
+            p[it]=node;
+            dfs(adj,it,vis);
+        }
     }
 }
+class BinaryLifting{
 
-class BinaryLifting {
-    vector<vector<int>> parent;
-    int LOG;
-
-public:
-    BinaryLifting(vector<int>& p, int n) {
-        LOG = 12; // works up to ~4000 nodes
+   vector<vector<int>>parent;
+   int LOG;
+   public:
+  BinaryLifting(vector<int>& p, int n) {
+        LOG = 20; // works up to ~4000 nodes
         parent.assign(LOG, vector<int>(n + 1, -1));
 
         // 2^0 parent
@@ -46,7 +51,7 @@ public:
         return node;
     }
 
-    int lca(int a, int b) {
+   int lca(int a, int b) {
         // 1️⃣ make depths equal
         if (level[a] < level[b]) swap(a, b);
 
@@ -66,38 +71,41 @@ public:
         // 4️⃣ parent is LCA
         return parent[0][a];
     }
+    int disbtw(int a,int b)
+    {
+        int node = lca(a,b);
+        return abs(level[node]-level[a])+abs(level[node]-level[b]);
+    }
 };
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n, q;
-    cin >> n >> q;
+    int n, m;
+    cin >> n >> m;  // n nodes, m edges
+    vector<int>vis(n+1,0);
+    
+    vector<vector<int>> adj(n + 1);
+    p.assign(n+1,-1);
+    level.assign(n+1,0);
 
-    vector<int> p(n + 1, -1);
-    for (int i = 2; i <= n; i++) {
-        cin >> p[i];
-    }
 
-    adj.assign(n + 1, {});
-    level.assign(n + 1, 0);
-
-    // build tree
-    for (int i = 2; i <= n; i++) {
-        adj[p[i]].push_back(i);
-    }
-
-    // root = 1
-    dfs(1, -1, 0);
-
-    BinaryLifting bl(p, n);
-
-    while (q--) {
+    for (int i = 0; i < n-1; i++) {
         int a, b;
         cin >> a >> b;
-        cout << bl.lca(a, b) << '\n';
+        adj[a].push_back(b);
+        adj[b].push_back(a);  // remove if graph is directed
     }
+   dfs(adj,1,vis);
+   BinaryLifting ashish = BinaryLifting(p,n);
+
+   while(m--)
+   {
+    int x,y;
+    cin>>x>>y;
+   cout<<ashish.disbtw(x,y)<<endl;
+   }
+
 
     return 0;
 }
